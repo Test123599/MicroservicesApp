@@ -1,0 +1,60 @@
+@ProductAPI_HostAddress = http://localhost:5179
+@Gateway_HostAddress = http://localhost:5069
+@productId = 11111111-1111-1111-1111-111111111111
+
+GET {{ProductAPI_HostAddress}}/api/products
+Accept: application/json
+
+###
+
+GET {{Gateway_HostAddress}}/products
+Accept: application/json
+
+###
+
+POST {{ProductAPI_HostAddress}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Clavier mecanique",
+  "description": "Clavier RGB 87 touches",
+  "price": 89.90,
+  "stock": 25
+}
+
+###
+
+POST {{Gateway_HostAddress}}/products
+Content-Type: application/json
+
+{
+  "name": "Souris sans fil",
+  "description": "Souris ergonomique",
+  "price": 29.90,
+  "stock": 50
+}
+
+###
+
+GET {{ProductAPI_HostAddress}}/api/products/{{productId}}
+Accept: application/json
+
+###
+
+PUT {{ProductAPI_HostAddress}}/api/products/{{productId}}
+Content-Type: application/json
+
+{
+  "id": "{{productId}}",
+  "name": "Clavier mecanique",
+  "description": "Clavier RGB 87 touches - promo",
+  "price": 79.90,
+  "stock": 20
+}
+
+###
+
+DELETE {{ProductAPI_HostAddress}}/api/products/{{productId}}
+Accept: application/json
+
+###

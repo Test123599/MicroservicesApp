@@ -1,0 +1,28 @@
+@Gateway_HostAddress = http://localhost:5069
+
+GET {{Gateway_HostAddress}}/products
+Accept: application/json
+
+###
+
+POST {{Gateway_HostAddress}}/products
+Content-Type: application/json
+
+{
+  "name": "Produit via gateway",
+  "description": "Cree via Ocelot",
+  "price": 15.50,
+  "stock": 10
+}
+
+###
+
+GET {{Gateway_HostAddress}}/orders
+Accept: application/json
+
+###
+
+GET {{Gateway_HostAddress}}/orders/products
+Accept: application/json
+
+###

@@ -1,0 +1,226 @@
+PROMPT OPENCODE — RÉALISATION DE L’ATELIER 8 : MICROSERVICES AVEC
+ASP.NET CORE IMPORTANT : LE PROJET / LA SOLUTION EXISTE DÉJÀ
+
+Tu es un développeur .NET senior spécialisé en ASP.NET Core,
+architecture microservices, Entity Framework Core, Ocelot, RabbitMQ et
+MassTransit.
+
+OBJECTIF Réaliser les parties pratiques de l’Atelier 8 « Introduction
+aux Microservices avec ASP.NET Core » en te basant sur le PDF fourni
+dans le projet/contexte.
+
+CONTRAINTE ABSOLUE La solution et les projets existent déjà. Ne crée
+donc PAS une nouvelle solution et ne recrée PAS les projets ProductsAPI,
+OrdersAPI ou ApiGateway. Ne lance aucune commande dotnet new et ne
+génère pas de nouveaux projets pour remplacer ceux qui existent.
+Commence par analyser la structure actuelle du dépôt et réutilise les
+projets, dossiers, classes, configurations et packages déjà présents.
+
+PROJETS ATTENDUS DANS LA SOLUTION - ProductsAPI : microservice de
+gestion des produits. - OrdersAPI : microservice de gestion des
+commandes et consommateur des événements produits. - ApiGateway :
+passerelle API basée sur Ocelot. - Shared : bibliothèque partagée
+contenant les DTO/messages échangés entre microservices.
+
+Si les noms réels des projets ou des dossiers diffèrent légèrement,
+identifie les équivalents existants et conserve les noms actuels. Ne
+renomme rien sans nécessité et sans m’expliquer la raison.
+
+MÉTHODE DE TRAVAIL OBLIGATOIRE 1. Inspecte d’abord toute la solution :
+fichiers .sln, .csproj, Program.cs, contrôleurs, modèles, DbContext,
+fichiers de configuration et éventuelles migrations. 2. Vérifie ce qui
+est déjà implémenté et ce qui manque par rapport aux objectifs
+ci-dessous. 3. Présente brièvement un diagnostic : éléments existants,
+éléments incomplets, erreurs détectées et plan des modifications. 4.
+Implémente ensuite les éléments manquants directement dans les projets
+existants. 5. Travaille par étapes cohérentes. Après chaque étape,
+vérifie les références entre projets et la compilation. 6. Ne supprime
+pas de fonctionnalités existantes. Ne remplace pas un fichier complet si
+une modification ciblée suffit. 7. Avant toute modification importante,
+vérifie le contenu du fichier concerné. Évite les doublons de classes,
+de routes, de packages, de DbSet ou de configurations. 8. N’invente pas
+les propriétés des modèles si elles sont déjà définies dans le projet ou
+dans le PDF. Réutilise les modèles existants et adapte les relations si
+nécessaire. 9. Si une information indispensable manque ou si le PDF ne
+permet pas de déterminer un détail, signale-le clairement et choisis la
+solution la plus cohérente avec le code existant, sans inventer
+inutilement. 10. À la fin, fournis un résumé des fichiers
+créés/modifiés, les commandes à exécuter et les étapes de test.
+
+PARTIE 1 — VÉRIFIER ET TERMINER ProductsAPI - Vérifie l’existence du
+modèle Product (ou de son équivalent). - Vérifie le contrôleur API
+ProductsController. - Vérifie le contexte Entity Framework Core et son
+DbSet de produits. - Vérifie la configuration de la connexion à la base
+de données. - Vérifie les opérations CRUD nécessaires pour gérer les
+produits. - Vérifie que les migrations existantes sont cohérentes avec
+le modèle et le DbContext. - Ne crée pas une deuxième classe Product, un
+deuxième DbContext ou un contrôleur en doublon. - Assure-toi que l’ajout
+d’un produit pourra déclencher ultérieurement la publication d’un
+événement RabbitMQ.
+
+PARTIE 2 — VÉRIFIER ET TERMINER OrdersAPI - Vérifie l’existence du
+modèle Order (ou Orders selon le code déjà présent), du contrôleur
+OrdersController et du DbContext. - Vérifie les opérations API
+nécessaires pour gérer les commandes. - Le microservice OrdersAPI doit
+posséder ses propres données et sa propre configuration de base de
+données. - Prépare la structure pour stocker localement les informations
+produit nécessaires au fonctionnement de OrdersAPI. - Évite de partager
+directement le DbContext ou la base de données de ProductsAPI avec
+OrdersAPI. - Vérifie les migrations et les relations existantes avant de
+les modifier.
+
+PARTIE 3 — CONFIGURER ApiGateway AVEC OCELOT - Utilise le projet
+ApiGateway déjà présent. - Vérifie si le package NuGet Ocelot est
+installé. S’il manque, ajoute une version compatible avec le framework
+.NET et les packages existants. - Vérifie ou crée le fichier Ocelot.json
+à la racine du projet ApiGateway. - Configure les routes de la
+passerelle pour rediriger les requêtes vers ProductsAPI et OrdersAPI. -
+Les routes doivent respecter les véritables ports et protocoles utilisés
+par les projets existants. Ne devine pas les ports : inspecte
+launchSettings.json, les profils de lancement et les configurations. -
+Configure correctement les propriétés Ocelot : Routes,
+DownstreamPathTemplate, DownstreamScheme, DownstreamHostAndPorts,
+UpstreamPathTemplate et UpstreamHttpMethod. - Vérifie la copie/lecture
+du fichier Ocelot.json au démarrage. - Configure le pipeline dans
+Program.cs pour charger la configuration Ocelot et exécuter le
+middleware Ocelot selon la version installée. - Les appels clients
+doivent pouvoir passer par ApiGateway sans appeler directement les
+microservices. - Ne modifie pas les ports des projets sans raison. Si un
+changement est indispensable, explique-le.
+
+PARTIE 4 — CRÉER OU COMPLÉTER LA BIBLIOTHÈQUE Shared - Réutilise le
+projet Shared s’il existe déjà. - Cette bibliothèque doit contenir le
+contrat de message partagé entre ProductsAPI et OrdersAPI. - Crée ou
+complète le DTO/message ProductCreated en utilisant les propriétés
+réellement nécessaires et compatibles avec le modèle Product existant. -
+Le message doit transporter les informations nécessaires pour que
+OrdersAPI puisse enregistrer une copie locale du produit. - Ajoute les
+références du projet Shared à ProductsAPI et OrdersAPI uniquement si
+elles sont absentes. - Évite de placer les entités Entity Framework ou
+les DbContext dans Shared : cette bibliothèque sert au contrat de
+communication.
+
+PARTIE 5 — CONFIGURER RABBITMQ ET MASSTRANSIT - Vérifie si Docker est
+installé et si un conteneur RabbitMQ est déjà configuré. Ne suppose pas
+que Docker est disponible. - Le TP utilise RabbitMQ avec l’interface
+d’administration activée. Le port AMQP indiqué dans le TP est le port
+personnalisé 4001; l’interface d’administration utilise généralement le
+port exposé prévu par la configuration Docker. - Ne lance pas de
+commande Docker destructive et ne supprime aucun conteneur ou volume
+existant. - Si RabbitMQ n’est pas encore disponible, donne la commande
+Docker nécessaire pour démarrer un conteneur RabbitMQ avec management,
+en vérifiant d’abord les ports déjà utilisés. Ne lance la commande que
+si cela est possible sans écraser une configuration existante. - Vérifie
+les packages NuGet MassTransit et l’intégration RabbitMQ dans
+ProductsAPI et OrdersAPI. Installe uniquement les packages manquants et
+compatibles avec la version .NET du projet. - Configure MassTransit dans
+Program.cs des deux microservices. - Utilise les paramètres de connexion
+RabbitMQ dans la configuration (appsettings.json ou variables
+d’environnement) plutôt que de disperser les identifiants dans le
+code. - Pour le TP local, les identifiants par défaut peuvent être guest
+/ guest si le serveur local les autorise. Ne les considère pas comme des
+identifiants de production. - Vérifie que les deux microservices
+utilisent le même hôte, le même port AMQP et les paramètres de connexion
+cohérents. - N’ajoute pas plusieurs enregistrements MassTransit
+concurrents dans le conteneur DI.
+
+PARTIE 6 — PUBLICATION D’ÉVÉNEMENT DANS ProductsAPI - Injecte
+MassTransit.IPublishEndpoint dans ProductsController via le
+constructeur. - Lorsqu’un produit est créé avec succès, publie un
+message de type ProductCreated. - Publie le message après
+l’enregistrement réussi du produit dans la base de données, afin de ne
+pas annoncer un produit qui n’a pas été sauvegardé. - Transmets dans le
+message les données utiles du produit enregistré. - Utilise les méthodes
+asynchrones (async / await) et les mécanismes adaptés à la version de
+MassTransit installée. - Ne publie pas l’événement lors d’une validation
+échouée ou d’un échec d’enregistrement. - Conserve les réponses HTTP et
+le comportement des endpoints existants autant que possible.
+
+PARTIE 7 — CONSOMMATION D’ÉVÉNEMENT DANS OrdersAPI - Vérifie ou crée le
+dossier Consumer. - Vérifie ou crée la classe ProductCreatedConsumer qui
+implémente MassTransit.IConsumer<ProductCreated>. - Dans Consume,
+récupère les données du message et enregistre le produit dans la table
+locale prévue dans la base de données OrdersAPI. - Vérifie qu’un produit
+déjà reçu ne soit pas inséré plusieurs fois. Utilise un identifiant
+stable provenant du message et une vérification adaptée au modèle
+existant. - Utilise Entity Framework Core de manière asynchrone. - Gère
+proprement les erreurs et évite de masquer les exceptions de
+consommation. - Enregistre le consommateur et le transport RabbitMQ dans
+la configuration MassTransit de OrdersAPI. - Configure un nom de file
+d’attente cohérent, par exemple event-listener, en respectant les
+conventions de la version de MassTransit utilisée. - Vérifie que le
+consommateur est effectivement enregistré au démarrage.
+
+PARTIE 8 — BASE DE DONNÉES ET MIGRATIONS - Vérifie la configuration et
+les migrations de chaque microservice séparément. - ProductsAPI et
+OrdersAPI doivent conserver leurs DbContext et leurs bases de données
+indépendants. - Ajoute une migration uniquement si le modèle a
+réellement changé et si les outils EF Core sont disponibles. - Ne
+supprime jamais les migrations existantes. - Ne lance pas de commande
+qui efface ou recrée une base de données. - Donne les commandes exactes
+pour créer/appliquer les migrations manquantes, en précisant le projet
+et le DbContext concernés. - Si une migration ne peut pas être exécutée
+dans l’environnement actuel, explique la raison et laisse les commandes
+à exécuter.
+
+PARTIE 9 — TESTS ET VALIDATION Effectue les vérifications possibles sans
+prétendre qu’un service externe fonctionne si tu ne peux pas le
+démarrer.
+
+1.  Compilation :
+    -   Compile la solution ou chaque projet existant.
+    -   Corrige les erreurs introduites par tes modifications.
+    -   Vérifie les versions .NET et NuGet, les références entre projets
+        et les namespaces.
+2.  Tests des microservices :
+    -   Vérifie les endpoints de ProductsAPI et OrdersAPI.
+    -   Donne les URL exactes selon les ports réels du projet.
+    -   Prépare des exemples de requêtes HTTP/JSON pour créer et
+        consulter des produits et des commandes.
+3.  Test de la Gateway :
+    -   Vérifie que les routes Ocelot redirigent vers les bons
+        endpoints.
+    -   Fournis les URL à appeler via ApiGateway.
+4.  Test RabbitMQ :
+    -   Vérifie que RabbitMQ est accessible et que MassTransit peut s’y
+        connecter, si l’environnement le permet.
+    -   Envoie une requête POST pour créer un produit via ProductsAPI ou
+        via ApiGateway.
+    -   Vérifie que le produit est enregistré dans ProductsAPI.
+    -   Vérifie ensuite que l’événement ProductCreated est consommé par
+        OrdersAPI et que les informations du produit sont enregistrées
+        dans la base de données locale d’OrdersAPI.
+    -   Indique clairement les résultats réellement vérifiés et ceux qui
+        restent à tester manuellement.
+
+RÈGLES TECHNIQUES - Respecte la version de .NET ciblée par les fichiers
+.csproj. - Respecte la version d’Entity Framework Core déjà utilisée. -
+Choisis des versions de Ocelot et MassTransit compatibles avec le
+framework du projet. Ne mets pas à jour tout le projet arbitrairement. -
+Respecte les conventions C# : PascalCase, injection de dépendances,
+async/await et gestion correcte des erreurs. - N’ajoute pas de
+dépendances inutiles. - Ne modifie pas les fichiers secrets et ne publie
+pas de clés ou mots de passe. - Ne remplace pas une architecture ou une
+bibliothèque déjà fonctionnelle sans justification. - Si le projet
+utilise une version récente de MassTransit où certains anciens packages
+ou exemples du support ne sont plus nécessaires, adapte l’implémentation
+à la version réellement installée tout en conservant le résultat
+pédagogique attendu. - Le PDF est la référence fonctionnelle du TP :
+deux microservices ProductsAPI et OrdersAPI, une API Gateway Ocelot, un
+projet Shared, puis une communication asynchrone RabbitMQ/MassTransit
+avec publication de ProductCreated et consommation dans OrdersAPI. - Ne
+prétends pas que le TP est terminé tant que la compilation et les
+vérifications possibles n’ont pas été effectuées.
+
+LIVRABLE FINAL ATTENDU À la fin, affiche : 1. Un diagnostic initial de
+la solution. 2. Les fonctionnalités réalisées, classées par partie. 3.
+La liste des fichiers créés et modifiés. 4. Les packages ajoutés ou
+versions ajustées, avec justification. 5. Les commandes nécessaires pour
+lancer les projets et RabbitMQ. 6. Les commandes EF Core nécessaires, si
+des migrations sont requises. 7. Les URL et exemples de requêtes pour
+tester les APIs et la Gateway. 8. La procédure complète pour vérifier la
+synchronisation asynchrone du produit entre ProductsAPI et OrdersAPI. 9.
+Les erreurs restantes ou les actions manuelles nécessaires.
+
+COMMENCE MAINTENANT PAR INSPECTER LA SOLUTION EXISTANTE. NE CRÉE AUCUN
+PROJET ET NE RECOMMENCE PAS LE TP DEPUIS ZÉRO.
